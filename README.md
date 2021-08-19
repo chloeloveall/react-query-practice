@@ -1,7 +1,3 @@
-https://www.youtube.com/watch?v=x1rQ61otgtU
-
-Net Ninja tutorial
-
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
