@@ -5,7 +5,7 @@ import Person from './Person';
 function People() {
   const [page, setPage] = useState(1);
 
-  const fetchPeople = (page = 1) => fetch(`http://swapi.dev/api/people/?page=${page}`).then((res) => res.json());
+  const fetchPeople = (page = 1) => fetch(`https://swapi.dev/api/people/?page=${page}`).then((res) => res.json());
 
   const { isLoading, isError, error, data, isPreviousData } = useQuery(['people', page], () => fetchPeople(page), {
     keepPreviousData: true,

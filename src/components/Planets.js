@@ -5,13 +5,11 @@ import Planet from './Planet';
 function Planets() {
   const [page, setPage] = useState(1);
 
-  const fetchPlanets = (page = 1) => fetch(`http://swapi.dev/api/planets/?page=${page}`).then((res) => res.json());
+  const fetchPlanets = (page = 1) => fetch(`https://swapi.dev/api/planets/?page=${page}`).then((res) => res.json());
 
-  const { isLoading, isError, error, data, isPreviousData } = useQuery(
-    ['planets', page],
-    () => fetchPlanets(page),
-    { keepPreviousData: true },
-  );
+  const { isLoading, isError, error, data, isPreviousData } = useQuery(['planets', page], () => fetchPlanets(page), {
+    keepPreviousData: true,
+  });
 
   return (
     <div>
@@ -36,7 +34,7 @@ function Planets() {
         <button
           onClick={() => {
             if (!isPreviousData && data.next) {
-              setPage(old => old + 1)
+              setPage((old) => old + 1);
             }
           }}
           // Disable the Next Page button until we know a next page is available
