@@ -3,44 +3,48 @@ import { useQuery } from 'react-query';
 import Planet from './Planet';
 
 function Planets() {
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
 
-  const fetchPlanets = async (key, greeting, page) => {
-    console.log(greeting);
-    const res = await fetch(`http://swapi.dev/api/planets/?page=${page}`);
-    return res.json();
-  }
+  const fetchPlanets = (page = 1) => fetch(`http://swapi.dev/api/planets/?page=${page}`).then((res) => res.json());
 
-  // first argument is a key for the query 
-  // second argument is an async function to fetch the data
-  const { data, status } = useQuery(['planets', 'hello, ninjas', page], fetchPlanets, {
-    staleTime: 2000,
-    // cacheTime: 10,
-    onSuccess: () => console.log('data has been fetched successfully'),
-  });
-  console.log(data);
+  const { isLoading, isError, error, data, isPreviousData } = useQuery(
+    ['planets', page],
+    () => fetchPlanets(page),
+    { keepPreviousData: true },
+  );
 
   return (
     <div>
       <h2>Planets</h2>
-      {status === 'loading' && (
-        <div>Loading data</div>
-      )}
-      {status === 'error' && (
-        <div>Error fetching data</div>
-      )}
-      {status === 'success' && (
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : isError ? (
+        <div>Error: {error.message}</div>
+      ) : (
         <div>
-          { data.results.map(planet => <Planet key={planet.name} planet={planet} />)}
+          {data.results.map((planet) => (
+            <Planet key={planet.name} planet={planet} />
+          ))}
         </div>
       )}
 
-      <button onClick={() => setPage(1)}>page 1</button>
-      <button onClick={() => setPage(2)}>page 2</button>
-      <button onClick={() => setPage(3)}>page 3</button>
-      <button onClick={() => setPage(4)}>page 4</button>
-      <button onClick={() => setPage(5)}>page 5</button>
-      <button onClick={() => setPage(6)}>page 6</button>
+      <div className='paginationDiv'>
+        <button onClick={() => setPage((old) => Math.max(old - 1, 1))} disabled={page === 1}>
+          previous page
+        </button>
+        <span>{page}</span>
+        <button
+          onClick={() => {
+            if (!isPreviousData && data.next) {
+              setPage(old => old + 1)
+            }
+          }}
+          // Disable the Next Page button until we know a next page is available
+          disabled={isPreviousData || !data?.next}
+        >
+          Next Page
+        </button>
+      </div>
     </div>
   );
 }
